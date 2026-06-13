@@ -16,6 +16,11 @@ public class ParkCarEndpoint : ControllerBase
     [HttpPost("parking")]
     public async Task<ActionResult> ParkCar(ParkCarCommand request, CancellationToken cancellationToken)
     {
+        var result = await _mediator.Send(request, cancellationToken);
+        
+        if (result is null)
+            return NotFound("No available parking spaces found");
+        
         return Ok(await _mediator.Send(request, cancellationToken));
     }
 }

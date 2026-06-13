@@ -11,11 +11,16 @@ public class ParkCarCommandHandler : IRequestHandler<ParkCarCommand, ParkedCarIn
 {
     private readonly CarParkManagementDbContext _dbContext;
     private readonly IAvailableParkingSpaceService _availableParkingSpaceService;
+    private readonly ILogger<ParkCarCommandHandler> _logger;
 
-    public ParkCarCommandHandler(CarParkManagementDbContext dbContext, IAvailableParkingSpaceService availableParkingSpaceService)
+    public ParkCarCommandHandler(
+        CarParkManagementDbContext dbContext,
+        IAvailableParkingSpaceService availableParkingSpaceService,
+        ILogger<ParkCarCommandHandler> logger)
     {
         _dbContext = dbContext;
         _availableParkingSpaceService = availableParkingSpaceService;
+        _logger = logger;
     }
 
     public async Task<ParkedCarInfo?> Handle(ParkCarCommand request, CancellationToken cancellationToken)
@@ -23,6 +28,7 @@ public class ParkCarCommandHandler : IRequestHandler<ParkCarCommand, ParkedCarIn
         var availableParkingSpace = await _availableParkingSpaceService.FindAvailableParkingSpace(cancellationToken);
         if (availableParkingSpace is null)
         {
+            _logger.LogWarning("No available parking spaces found for vehicle {RequestVehicleReg}", request.VehicleReg);
             return null;
         }
 
@@ -38,6 +44,11 @@ public class ParkCarCommandHandler : IRequestHandler<ParkCarCommand, ParkedCarIn
         availableParkingSpace.State = ParkingSpaceState.Occupied;
         availableParkingSpace.OccupiedSince = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync(cancellationToken);
+        
+        _logger.LogInformation(
+            "Parked vehicle {RequestVehicleReg} in parking space {ParkingSpaceParkingSpaceId}",
+            request.VehicleReg,
+            availableParkingSpace.ParkingSpaceId);
         
         return new ParkedCarInfo(
             parkedCar.RegistrationNumber,
