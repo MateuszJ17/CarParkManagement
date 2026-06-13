@@ -1,0 +1,7 @@
+﻿services:
+  carparkmanagement:
+    image: carparkmanagement
+    build:
+      context: .
+      dockerfile: CarParkManagement/Dockerfile
+
