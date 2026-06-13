@@ -1,6 +1,7 @@
 using CarParkManagement.Database.DbContext;
 using CarParkManagement.Domain.Dtos;
 using CarParkManagement.Domain.Enums;
+using CarParkManagement.Features.Parking.ExitParking.Exceptions;
 using CarParkManagement.Features.Parking.ExitParking.Helpers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -36,8 +37,8 @@ public class ExitParkingCommandHandler : IRequestHandler<ExitParkingCommand, Car
             _logger.LogError(
                 "Attempted parking exit for vehicle {VehicleReg} but no parking space or car found",
                 request.VehicleReg);
-            // todo: throw custom exception
-            throw new Exception("No car found");
+            
+            throw new ExitParkingException(request.VehicleReg);
         }
         
         _logger.LogInformation(

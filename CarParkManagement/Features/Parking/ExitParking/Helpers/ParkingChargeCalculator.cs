@@ -1,3 +1,5 @@
+using CarParkManagement.Features.Parking.ExitParking.Exceptions;
+
 namespace CarParkManagement.Features.Parking.ExitParking.Helpers;
 
 public class ParkingChargeCalculator : IParkingChargeCalculator
@@ -11,7 +13,7 @@ public class ParkingChargeCalculator : IParkingChargeCalculator
             1 => 0.10,
             2 => 0.20,
             3 => 0.40,
-            _ => throw new ArgumentOutOfRangeException(nameof(parkedCarType), "Unknown car type") // todo: throw custom exception
+            _ => throw new UnknownCarTypeException(parkedCarType)
         };
 
         var normalCharge = minutesSpentInParking * chargePerCarType;

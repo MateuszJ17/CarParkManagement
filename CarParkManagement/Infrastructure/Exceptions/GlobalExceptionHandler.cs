@@ -1,3 +1,4 @@
+using CarParkManagement.Features.Parking.ExitParking.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,18 @@ public class GlobalExceptionHandler : IExceptionHandler
                 Status = StatusCodes.Status400BadRequest,
                 Title = "Validation failed",
                 Detail = string.Join(", ", validationException.Errors.Select(e => e.ErrorMessage))
+            },
+            ExitParkingException exitParkingException => new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Exit parking failed",
+                Detail = exitParkingException.Message
+            },
+            UnknownCarTypeException unknownCarTypeException => new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Unknown car type",
+                Detail = unknownCarTypeException.Message
             },
             _ => new ProblemDetails
             {
