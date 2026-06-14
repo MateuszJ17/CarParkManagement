@@ -4,4 +4,30 @@
     build:
       context: .
       dockerfile: CarParkManagement/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__CarParkManagementDb: "Server=postgres;Port=5432;Database=carpark_dev;User Id=carpark_user;Password=carpark_pass"
+    ports:
+      - "8080:8080"
+  
+  postgres:
+    image: postgres:17-alpine
+    container_name: carparkmanagement-db
+    environment:
+      POSTGRES_DB: carpark_dev
+      POSTGRES_USER: carpark_user
+      POSTGRES_PASSWORD: carpark_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U carpark_user -d carpark_dev" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+volumes:
+  postgres_data:

@@ -1,41 +1,70 @@
-var builder = WebApplication.CreateBuilder(args);
+using CarParkManagement.Database.DbContext;
+using CarParkManagement.Database.Seeds;
+using CarParkManagement.Features.Parking.ExitParking;
+using CarParkManagement.Features.Parking.ExitParking.Helpers;
+using CarParkManagement.Features.Parking.FetchParkingSpaces.Helpers;
+using CarParkManagement.Features.Parking.ParkCar;
+using CarParkManagement.Features.Parking.ParkCar.Helpers;
+using CarParkManagement.Infrastructure.Exceptions;
+using CarParkManagement.Infrastructure.Validation;
+using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+try
 {
-    app.MapOpenApi();
-}
+    var builder = WebApplication.CreateBuilder(args);
 
-app.UseHttpsRedirection();
+    builder.Host.UseSerilog((context, services, configuration) =>
+        configuration.ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services));
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    builder.Services.AddOpenApi();
+    builder.Services.AddControllers();
 
-app.MapGet("/weatherforecast", () =>
+    builder.Services.AddDbContext<CarParkManagementDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString(CarParkManagementDbContext.ConnectionStringName)));
+
+    builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<Program>());
+    builder.Services.AddScoped<IValidator<ExitParkingCommand>, ExitParkingCommandValidator>();
+    builder.Services.AddScoped<IValidator<ParkCarCommand>, ParkCarCommandValidator>();
+    builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+    builder.Services.AddScoped<IParkingChargeCalculator, ParkingChargeCalculator>();
+    builder.Services.AddScoped<IAvailableParkingSpaceService, AvailableParkingSpaceService>();
+    builder.Services.AddScoped<IParkingSpacesInfoService, ParkingSpacesInfoService>();
+
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddProblemDetails();
+
+
+    var app = builder.Build();
+
+    if (!app.Environment.IsEnvironment("Testing"))
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+        await app.MigrateAndSeedAsync();
+    }
 
-app.Run();
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi();
+    }
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+    app.UseHttpsRedirection();
+    app.UseExceptionHandler();
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception ex)
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    Log.Fatal(ex, "Application failed unexpectedly during startup");
+}
+finally
+{
+    Log.CloseAndFlush();
 }

@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		compose.yaml = compose.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarParkManagement.Tests", "CarParkManagement.Tests\CarParkManagement.Tests.csproj", "{0FA6A874-D0D7-402B-9F39-68E1AC464E2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,5 +19,9 @@ Global
 		{ED3BA31C-6149-4388-A44C-E319806CB838}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED3BA31C-6149-4388-A44C-E319806CB838}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED3BA31C-6149-4388-A44C-E319806CB838}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FA6A874-D0D7-402B-9F39-68E1AC464E2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FA6A874-D0D7-402B-9F39-68E1AC464E2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FA6A874-D0D7-402B-9F39-68E1AC464E2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FA6A874-D0D7-402B-9F39-68E1AC464E2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
