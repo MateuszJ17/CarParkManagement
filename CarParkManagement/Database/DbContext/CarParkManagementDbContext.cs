@@ -24,7 +24,7 @@ public class CarParkManagementDbContext : Microsoft.EntityFrameworkCore.DbContex
             x.Property(y => y.RegistrationNumber).IsRequired().HasMaxLength(8);
             x.Property(y => y.Type).IsRequired();
             
-            x.HasOne<ParkingSpace>().WithOne().HasForeignKey<Car>(y => y.ParkingSpaceId);
+            x.HasOne<ParkingSpace>().WithOne(y => y.Car).HasForeignKey<Car>(y => y.ParkingSpaceId);
         });
         
         modelBuilder.Entity<ParkingSpace>(x =>

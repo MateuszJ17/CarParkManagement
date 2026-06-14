@@ -16,7 +16,7 @@ public class FetchParkingSpacesEndpoint : ControllerBase
     
     [HttpGet("parking")]
     public async Task<ActionResult<AvailableSpacesInfo>> FetchAvailableParkingSpaces(
-        FetchParkingSpacesQuery request,
+        [FromQuery] FetchParkingSpacesQuery request,
         CancellationToken cancellationToken)
     {
         return Ok(await _mediator.Send(request, cancellationToken));

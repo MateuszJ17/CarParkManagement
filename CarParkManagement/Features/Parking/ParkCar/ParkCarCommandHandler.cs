@@ -38,7 +38,6 @@ public class ParkCarCommandHandler : IRequestHandler<ParkCarCommand, ParkedCarIn
             RegistrationNumber = request.VehicleReg,
             Type = request.VehicleType
         };
-        await _dbContext.Cars.AddAsync(parkedCar, cancellationToken);
         
         availableParkingSpace.Car = parkedCar;
         availableParkingSpace.State = ParkingSpaceState.Occupied;

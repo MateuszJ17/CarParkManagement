@@ -33,8 +33,7 @@ namespace CarParkManagement.Database.Migrations
                     CarId = table.Column<Guid>(type: "uuid", nullable: false),
                     ParkingSpaceId = table.Column<int>(type: "integer", nullable: false),
                     RegistrationNumber = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    ParkingSpaceId1 = table.Column<int>(type: "integer", nullable: true)
+                    Type = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,23 +44,12 @@ namespace CarParkManagement.Database.Migrations
                         principalTable: "ParkingSpaces",
                         principalColumn: "ParkingSpaceId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Cars_ParkingSpaces_ParkingSpaceId1",
-                        column: x => x.ParkingSpaceId1,
-                        principalTable: "ParkingSpaces",
-                        principalColumn: "ParkingSpaceId");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cars_ParkingSpaceId",
                 table: "Cars",
                 column: "ParkingSpaceId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cars_ParkingSpaceId1",
-                table: "Cars",
-                column: "ParkingSpaceId1",
                 unique: true);
         }
 

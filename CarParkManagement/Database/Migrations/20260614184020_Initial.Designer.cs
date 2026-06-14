@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CarParkManagement.Database.Migrations
 {
     [DbContext(typeof(CarParkManagementDbContext))]
-    [Migration("20260613183405_Initial")]
+    [Migration("20260614184020_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -34,9 +34,6 @@ namespace CarParkManagement.Database.Migrations
                     b.Property<int>("ParkingSpaceId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ParkingSpaceId1")
-                        .HasColumnType("integer");
-
                     b.Property<string>("RegistrationNumber")
                         .IsRequired()
                         .HasMaxLength(8)
@@ -48,9 +45,6 @@ namespace CarParkManagement.Database.Migrations
                     b.HasKey("CarId");
 
                     b.HasIndex("ParkingSpaceId")
-                        .IsUnique();
-
-                    b.HasIndex("ParkingSpaceId1")
                         .IsUnique();
 
                     b.ToTable("Cars");
@@ -79,14 +73,10 @@ namespace CarParkManagement.Database.Migrations
             modelBuilder.Entity("CarParkManagement.Database.Entities.Car", b =>
                 {
                     b.HasOne("CarParkManagement.Database.Entities.ParkingSpace", null)
-                        .WithOne()
+                        .WithOne("Car")
                         .HasForeignKey("CarParkManagement.Database.Entities.Car", "ParkingSpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CarParkManagement.Database.Entities.ParkingSpace", null)
-                        .WithOne("Car")
-                        .HasForeignKey("CarParkManagement.Database.Entities.Car", "ParkingSpaceId1");
                 });
 
             modelBuilder.Entity("CarParkManagement.Database.Entities.ParkingSpace", b =>

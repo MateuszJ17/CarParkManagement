@@ -16,7 +16,7 @@ public class ExitParkingEndpoint : ControllerBase
 
     [HttpPost("parking/exit")]
     public async Task<ActionResult<CarExitInfo>> ExitParking(
-        ExitParkingCommand request,
+        [FromBody] ExitParkingCommand request,
         CancellationToken cancellationToken)
     {
         return Ok(await _mediator.Send(request, cancellationToken));
