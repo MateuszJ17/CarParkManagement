@@ -19,6 +19,6 @@ public class ParkingChargeCalculator : IParkingChargeCalculator
         var normalCharge = minutesSpentInParking * chargePerCarType;
         var fiveMinutesCharge = Math.Floor(minutesSpentInParking / 5);
         
-        return normalCharge + fiveMinutesCharge;
+        return Math.Round(normalCharge + fiveMinutesCharge, 2);
     }
 }
